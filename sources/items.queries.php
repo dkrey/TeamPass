@@ -1823,6 +1823,7 @@ if (isset($_POST['type'])) {
                     );
                 } else {
                     $items_to_display_once = "max";
+					$where->add('i.inactif=%i', 0);
                     /*
                     if ($items_to_display_once != 'max') {
                         $query_limit = " LIMIT ".$start.",".$items_to_display_once;
@@ -1901,7 +1902,7 @@ if (isset($_POST['type'])) {
                             }
                         }
                         // Can user modify it?
-                        if ($record['anyone_can_modify'] == 1 ||
+                        if ($record['anyone_can_modify'] != -1 ||
                             $_SESSION['user_id'] == $record['log_user'] ||
                             ($_SESSION['user_read_only'] == 1 && $folderIsPf == 0)
                         ) {

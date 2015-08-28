@@ -213,7 +213,7 @@ function IdentifyUser($sentData)
     );
     $counter = DB::count();
     if ($counter == 0) {
-        echo '[{"value" : "error", "text":"user_not_exists"}]';
+        echo '[{"value" : "error", "text":"'.$LANG['errors'].'"}]';
         exit;
     }
     // Check PSK

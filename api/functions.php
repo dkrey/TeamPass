@@ -16,7 +16,7 @@
 $_SESSION['CPM'] = 1;
 
 function teampass_api_enabled() {
-    include "../sources/main.functions.php";
+    require_once "../sources/main.functions.php";
     teampass_connect();
     $response = DB::queryFirstRow(
         "SELECT `valeur` FROM ".prefix_table("misc")." WHERE type = %s AND intitule = %s",
@@ -52,7 +52,7 @@ function teampass_connect()
 
 function teampass_get_ips() {
     global $server, $user, $pass, $database, $link;
-    include "../sources/main.functions.php";
+    require_once "../sources/main.functions.php";
     $array_of_results = array();
     teampass_connect();
     $response = DB::query("select value from ".prefix_table("api")." WHERE type = %s", "ip");
@@ -66,7 +66,7 @@ function teampass_get_ips() {
 
 function teampass_get_keys() {
     global $server, $user, $pass, $database, $link;
-    include "../sources/main.functions.php";
+    require_once "../sources/main.functions.php";
     teampass_connect();
     $response = DB::queryOneColumn("value", "select * from ".prefix_table("api")." WHERE type = %s", "key");
 
@@ -75,7 +75,7 @@ function teampass_get_keys() {
 
 function teampass_get_randkey() {
     global $server, $user, $pass, $database, $link;
-    include "../sources/main.functions.php";
+    require_once "../sources/main.functions.php";
     teampass_connect();
     $response = DB::queryOneColumn("rand_key", "select * from ".prefix_table("keys")." limit 0,1");
 
@@ -89,7 +89,7 @@ function rest_head () {
 function addToCacheTable($id)
 {
     global $server, $user, $pass, $database, $link;
-    include "../sources/main.functions.php";
+    require_once "../sources/main.functions.php";
     teampass_connect();
     // get data
     $data = DB::queryfirstrow(
@@ -153,7 +153,7 @@ function rest_delete () {
     }
     if(apikey_checker($GLOBALS['apikey'])) {
         global $server, $user, $pass, $database, $pre, $link;
-        include "../sources/main.functions.php";
+        require_once "../sources/main.functions.php";
         teampass_connect();
         $rand_key = teampass_get_randkey();
         $category_query = "";
@@ -265,7 +265,7 @@ function rest_get () {
     }
     if(apikey_checker($GLOBALS['apikey'])) {
         global $server, $user, $pass, $database, $pre, $link;
-        include "../sources/main.functions.php";
+        require_once "../sources/main.functions.php";
         teampass_connect();
         $rand_key = teampass_get_randkey();
         $category_query = "";
@@ -339,7 +339,8 @@ function rest_get () {
                 } else {
                     rest_error ('NO_ITEM');
                 }
-                $response = DB::query("select id,label,login,pw,id_tree from ".prefix_table("items")." where id IN %ls", $items_list);
+
+                $response = DB::query("select id,label,login,pw,id_tree from ".prefix_table("items")." where id IN %ls", $array_items);
                 foreach ($response as $data)
                 {
                     // get ITEM random key
@@ -352,6 +353,23 @@ function rest_get () {
                     $json[$id]['pw'] = teampass_decrypt_pw($data['pw'], SALT, $data_tmp['rand_key']);
                 }
             }
+            elseif($GLOBALS['request'][1] == "item_label") {
+
+		$item_label = urldecode($GLOBALS['request'][2]);
+
+                $response = DB::query("select id,label,login,pw,id_tree from ".$pre."items where label = %s", $item_label);
+                foreach ($response as $data)
+                {
+                    // get ITEM random key
+                    $data_tmp = DB::queryFirstRow("SELECT rand_key FROM ".$pre."keys WHERE id = %i", $data['id']);
+
+                    // prepare output
+                    $id = $data['id'];
+                    $json[$id]['label'] = utf8_encode($data['label']);
+                    $json[$id]['login'] = utf8_encode($data['login']);
+                    $json[$id]['pw'] = teampass_decrypt_pw($data['pw'], SALT, $data_tmp['rand_key']);
+                }
+            }	
 
             if (isset($json) && $json) {
                 echo json_encode($json);
@@ -420,7 +438,7 @@ function rest_get () {
             }
         } elseif ($GLOBALS['request'][0] == "add") {
             if($GLOBALS['request'][1] == "item") {
-                include "../sources/main.functions.php";
+                require_once "../sources/main.functions.php";
 
                 // get item definition
                 $array_item = explode(';', $GLOBALS['request'][2]);
@@ -654,7 +672,7 @@ function rest_put() {
     }
     if(apikey_checker($GLOBALS['apikey'])) {
         global $server, $user, $pass, $database, $pre, $link;
-        include "../sources/main.functions.php";
+        require_once "../sources/main.functions.php";
         teampass_connect();
         $rand_key = teampass_get_randkey();
     }

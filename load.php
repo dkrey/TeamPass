@@ -194,7 +194,7 @@ $htmlHeaders .= '
                     else if (data[0].initial_url != "") window.location.href=data[0].initial_url;
                     else window.location.href="index.php";
                 } else if (data[0].value == "user_is_locked") {
-                    $("#connection_error").html("'.$LANG['account_is_locked'].'").show();
+                    $("#connection_error").html("'.$LANG['errors'].'").show();
                 } else if (data[0].value == "bad_psk") {
                     $("#ajax_loader_connexion").hide();
                     $("#connection_error").html("'.$LANG['bad_psk'].'").show();
@@ -206,10 +206,11 @@ $htmlHeaders .= '
                     $("#connection_error").html("'.$LANG['psk_required'].'");
                     $("#connection_error, #connect_psk_confirm").show();
                 } else if (!isNaN(parseFloat(data[0].value)) && isFinite(data[0].value)) {
-                    $("#connection_error").html(data + "'.$LANG['login_attempts_on'].(@$_SESSION['settings']['nb_bad_authentication'] + 1).'").show();
+                    $("#connection_error").html("'.$LANG['errors'].'").show();
                 } else if (data[0].value == "error") {
-                    $("#mysql_error_warning").html(data[0].text);
-                    $("#div_mysql_error").show().dialog("open");
+                    $("#connection_error").html("'.$LANG['errors'].'").show();
+		    		// $("#mysql_error_warning").html(data[0].text);
+                    // $("#div_mysql_error").show().dialog("open");
                 } else if (data[0].value == "false_onetimepw") {
                     $("#connection_error").html("'.$LANG['bad_onetime_password'].'").show();
                 } else if (data[0].error == "bad_credentials") {
@@ -453,7 +454,7 @@ $htmlHeaders .= '
             autoOpen: false,
             width: 700,
             height: 150,
-            title: "'.$LANG['error_mysql'].'",
+            title: "'.$LANG['errors'].'",
             buttons: {
                 "'.$LANG['ok'].'": function() {
                     $(this).dialog("close");
